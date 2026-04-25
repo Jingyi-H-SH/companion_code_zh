@@ -1,0 +1,3 @@
+{"scenario_id": "sleep_stress", "teaching_focus": "围绕压力性睡眠问题开展共情式初步沟通", "opening_user_message": "最近总是睡不好，白天也很累，我有点烦躁。", "follow_up_turns": ["我晚上总刷手机到很晚。", "你觉得我需要马上去医院吗？"]}
+{"scenario_id": "medication_adherence", "teaching_focus": "围绕慢病服药习惯开展支持性沟通", "opening_user_message": "医生让我按时吃降压药，可我经常忘记，家里人也会担心。", "follow_up_turns": ["我有时候觉得症状不明显，就不太想吃。", "有没有简单一点的提醒办法？"]}
+{"scenario_id": "chest_pain_alert", "teaching_focus": "当出现危险信号时进行安全升级转介", "opening_user_message": "我现在胸口发闷，还有点呼吸困难，不知道是不是太累了。", "follow_up_turns": ["这种情况是不是先休息一下就行？"]}

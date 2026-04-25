@@ -1,0 +1,17 @@
+﻿message_id,raw_text,gold_topic
+M01,社区医院挂号总是排队，能不能线上预约体检？,appointment_access
+M02,我爸高血压复诊想问药要不要调整，最近头晕。,chronic_disease
+M03,医生建议减重，有没有适合上班族的饮食和运动计划？,diet_exercise
+M04,医保报销比例看不太懂，慢病药能不能多报一点？,insurance_payment
+M05,预约疫苗的时候系统一直卡住，真的很着急。,appointment_access
+M06,糖尿病饮食控制总失败，晚上总想吃甜食。,diet_exercise
+M07,我妈妈心衰复查后腿肿了，需要尽快联系医生吗？,chronic_disease
+M08,住院以后费用太高，医保外用药能申请补助吗？,insurance_payment
+M09,门诊挂号流程挺方便，志愿者也很耐心。,appointment_access
+M10,最近医生让我少盐少油，我想知道怎么做饭更健康。,diet_exercise
+M11,复诊时间到了，但我血糖波动很大，有点担心。,chronic_disease
+M12,报销材料是不是还要上传发票？页面提示不清楚。,insurance_payment
+M13,预约成功短信来得很快，这次体验不错。,appointment_access
+M14,减脂餐坚持了一周，感觉身体轻松一点了。,diet_exercise
+M15,哮喘最近反复发作，晚上喘得厉害，需要马上去医院吗？,chronic_disease
+M16,新农合门诊能报多少，我在乡镇卫生院看病。,insurance_payment

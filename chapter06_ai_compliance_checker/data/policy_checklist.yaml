@@ -1,0 +1,17 @@
+{
+  "privacy": [
+    {"id": "P1", "question": "是否只收集完成任务所必需的个人数据", "weight": 3},
+    {"id": "P2", "question": "是否清楚说明了数据保存期限", "weight": 2},
+    {"id": "P3", "question": "是否提供了同意与退出机制", "weight": 3}
+  ],
+  "explainability": [
+    {"id": "E1", "question": "是否说明系统能做什么、不能做什么", "weight": 3},
+    {"id": "E2", "question": "是否展示了建议生成的依据", "weight": 2},
+    {"id": "E3", "question": "在需要时是否能转交给人工支持", "weight": 3}
+  ],
+  "fairness": [
+    {"id": "F1", "question": "是否已测试不同用户群体下的表现", "weight": 3},
+    {"id": "F2", "question": "上线后是否监测了差异性影响", "weight": 2},
+    {"id": "F3", "question": "是否提供了纠错或申诉路径", "weight": 2}
+  ]
+}

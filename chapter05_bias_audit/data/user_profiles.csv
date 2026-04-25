@@ -1,0 +1,7 @@
+﻿profile_id,age_group,gender,income_level,region,digital_access
+P01,young_adult,female,low,urban,high
+P02,older_adult,male,low,rural,low
+P03,young_adult,nonbinary,high,urban,high
+P04,middle_adult,female,middle,rural,medium
+P05,older_adult,female,high,urban,high
+P06,middle_adult,male,middle,urban,medium
