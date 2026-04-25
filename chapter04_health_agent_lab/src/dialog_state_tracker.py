@@ -1,16 +1,17 @@
-def update_state(prior_state, user_text):
-    state = dict(prior_state)
-    text = str(user_text)
-    state["turn_count"] = state.get("turn_count", 0) + 1
-    if any(keyword in text for keyword in ["烦躁", "担心", "压力", "累"]):
-        state["emotion"] = "distressed"
-    if any(keyword in text for keyword in ["忘记", "提醒"]):
-        state["need"] = "routine_support"
-    if any(keyword in text for keyword in ["胸口", "呼吸困难", "剧烈疼痛"]):
-        state["risk_level"] = "high"
-    elif any(keyword in text for keyword in ["头晕", "腿肿", "发作"]):
-        state["risk_level"] = "medium"
+"""Summarize the user turn into a small state object for reply generation."""
+
+def summarize_user_state(message: str) -> dict:
+    lowered = message.lower()
+    if any(term in lowered for term in ["chest", "cannot breathe", "short of breath", "severe pain"]):
+        emotion = "distressed"
+    elif any(term in lowered for term in ["sleep", "exhausted", "irritable", "stress"]):
+        emotion = "overwhelmed"
+    elif any(term in lowered for term in ["medicine", "blood pressure", "forgetting"]):
+        emotion = "uncertain"
     else:
-        state.setdefault("risk_level", "low")
-    state["last_user_text"] = text
-    return state
+        emotion = "seeking_help"
+    return {
+        "emotion": emotion,
+        "mentions_red_flag": any(term in lowered for term in ["chest", "short of breath", "fainted", "cannot breathe"]),
+        "needs_practical_tip": any(term in lowered for term in ["how", "what", "simple", "try"]),
+    }

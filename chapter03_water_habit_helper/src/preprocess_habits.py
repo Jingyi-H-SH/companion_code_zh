@@ -1,26 +1,31 @@
+"""Transform the habit log into interpretable fields for LLM-based risk estimation."""
+
 from pathlib import Path
 import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INPUT_PATH = ROOT / "data" / "water_habit_log.csv"
-OUTPUT_PATH = ROOT / "outputs" / "processed_habits.csv"
+DATA_PATH = ROOT / "data" / "water_habit_log.csv"
+OUTPUT_PATH = ROOT / "outputs" / "habit_features.csv"
 
 
 def main() -> None:
-    frame = pd.read_csv(INPUT_PATH)
-    frame["completion_rate"] = (frame["actual_ml"] / frame["goal_ml"]).round(3)
+    frame = pd.read_csv(DATA_PATH)
     frame["missed_goal"] = (frame["actual_ml"] < frame["goal_ml"]).astype(int)
-    frame["low_morning_intake"] = (frame["intake_before_noon_ml"] < 500).astype(int)
-    frame["hot_weather"] = (frame["temperature_c"] >= 30).astype(int)
-    frame["high_activity"] = (frame["exercise_min"] >= 30).astype(int)
-    frame["busy_flag"] = (frame["busy_day"] == "yes").astype(int)
-    frame["low_sleep"] = (frame["sleep_hours"] < 7).astype(int)
-    frame["row_id"] = range(1, len(frame) + 1)
-    frame["is_test"] = (frame["row_id"] > int(len(frame) * 0.7)).astype(int)
+    frame["morning_progress_ratio"] = (frame["intake_before_noon_ml"] / frame["goal_ml"]).round(2)
+    frame["busy_binary"] = frame["busy_day"].map({"yes": 1, "no": 0}).fillna(0).astype(int)
+    frame["feature_brief"] = frame.apply(
+        lambda row: (
+            f"Goal {row['goal_ml']} ml; noon intake {row['intake_before_noon_ml']} ml; "
+            f"temperature {row['temperature_c']}C; exercise {row['exercise_min']} min; "
+            f"busy day {row['busy_day']}; sleep {row['sleep_hours']} h; "
+            f"missed previous day {row['missed_previous_day']}."
+        ),
+        axis=1,
+    )
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_csv(OUTPUT_PATH, index=False, encoding="utf-8-sig")
-    print(f"已保存预处理后的饮水记录：{OUTPUT_PATH}")
+    frame.to_csv(OUTPUT_PATH, index=False)
+    print(f"Saved {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

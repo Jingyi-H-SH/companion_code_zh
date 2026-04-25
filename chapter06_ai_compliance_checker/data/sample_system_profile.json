@@ -1,0 +1,22 @@
+{
+  "name": "HealthyTalk Assistant",
+  "purpose": "为希望获得日常健康信息的成年人提供一般性健康建议和基础导航支持。",
+  "data_practices": {
+    "collects_minimum_data": true,
+    "retention_policy": "当前产品方案写明会为了质控保存对话，但没有明确保存期限。",
+    "consent_flow": true,
+    "opt_out": true
+  },
+  "explainability": {
+    "capability_statement": true,
+    "shows_reasoning_basis": false,
+    "human_handoff": true,
+    "emergency_limit_notice": true
+  },
+  "fairness_and_governance": {
+    "group_testing_complete": false,
+    "post_deployment_monitoring": false,
+    "appeal_path": true,
+    "documentation_status": "团队内部有一份简短清单，但还没有完成正式的对外治理文档。"
+  }
+}

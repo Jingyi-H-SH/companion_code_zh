@@ -1,26 +1,28 @@
-import re
+"""Prepare sample resident messages for the downstream LLM workflow."""
+
 from pathlib import Path
+import re
 import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INPUT_PATH = ROOT / "data" / "sample_messages.csv"
+DATA_PATH = ROOT / "data" / "sample_messages.csv"
 OUTPUT_PATH = ROOT / "outputs" / "cleaned_messages.csv"
 
 
-def normalize_text(text: str) -> str:
-    text = str(text).strip()
-    text = re.sub(r'[，。！？；：,.!?;:（）()【】\[\]“”‘’"]', " ", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip().lower()
+def normalize(text: str) -> str:
+    text = re.sub(r"\s+", " ", text.strip())
+    return text
 
 
 def main() -> None:
+    frame = pd.read_csv(DATA_PATH)
+    frame["clean_text"] = frame["raw_text"].map(normalize)
+    frame["char_count"] = frame["clean_text"].str.len()
+    frame["question_marks"] = frame["clean_text"].str.count(r"\?")
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    frame = pd.read_csv(INPUT_PATH)
-    frame["cleaned_text"] = frame["raw_text"].fillna("").map(normalize_text)
-    frame.to_csv(OUTPUT_PATH, index=False, encoding="utf-8-sig")
-    print(f"已保存清洗后的留言数据：{OUTPUT_PATH}")
+    frame.to_csv(OUTPUT_PATH, index=False)
+    print(f"Saved {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

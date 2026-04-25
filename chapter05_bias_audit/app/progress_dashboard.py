@@ -50,7 +50,7 @@ def render_dashboard(progress_path=None):
     body_font = load_font(18)
     small_font = load_font(16)
 
-    draw.text((50, 38), payload.get("title", "进度看板"), font=title_font, fill="#14314a")
+    draw.text((50, 38), payload.get("title", "Progress Dashboard"), font=title_font, fill="#14314a")
     draw.text((50, 90), payload.get("subtitle", ""), font=subtitle_font, fill="#5c6e7e")
 
     draw.text((50, 150), "流程进度", font=section_font, fill="#14314a")
@@ -61,19 +61,19 @@ def render_dashboard(progress_path=None):
         draw_card(draw, (x, y, x + 610, y + 88), "#ffffff", "#d9e0ea")
         draw.rounded_rectangle((x + 18, y + 18, x + 92, y + 70), radius=16, fill=fill, outline=accent, width=2)
         draw.text((x + 40, y + 34), str(index + 1), font=section_font, fill=accent)
-        draw.text((x + 110, y + 22), step.get("name", "步骤"), font=section_font, fill="#1c3247")
+        draw.text((x + 110, y + 22), step.get("name", "Step"), font=section_font, fill="#1c3247")
         draw.text((x + 110, y + 56), step.get("detail", ""), font=body_font, fill="#506274")
 
     draw.text((50, 560), "关键指标", font=section_font, fill="#14314a")
     metrics = payload.get("metrics", [])
-    for index, metric in enumerate(metrics):
-        x = 50 + index * 220
+    for index, metric in enumerate(metrics[:5]):
+        x = 50 + index * 250
         y = 600
-        draw_card(draw, (x, y, x + 190, y + 120), "#ffffff", "#d9e0ea")
-        draw.text((x + 20, y + 22), metric.get("label", "指标"), font=body_font, fill="#5f7181")
+        draw_card(draw, (x, y, x + 220, y + 120), "#ffffff", "#d9e0ea")
+        draw.text((x + 20, y + 22), metric.get("label", "Metric"), font=body_font, fill="#5f7181")
         draw.text((x + 20, y + 62), metric.get("value", "-"), font=load_font(30, bold=True), fill="#0f7b73")
 
-    draw.text((50, 760), "教学提示", font=section_font, fill="#14314a")
+    draw.text((50, 760), "读者提示", font=section_font, fill="#14314a")
     notes = payload.get("notes", [])
     for index, note in enumerate(notes[:4]):
         draw.text((70, 804 + index * 26), "• " + note, font=small_font, fill="#4e6071")
@@ -86,4 +86,4 @@ def render_dashboard(progress_path=None):
 
 if __name__ == "__main__":
     final_path = render_dashboard(sys.argv[1] if len(sys.argv) > 1 else None)
-    print(f"进度看板已保存到 {final_path}")
+    print("进度看板已保存到 " + str(final_path))

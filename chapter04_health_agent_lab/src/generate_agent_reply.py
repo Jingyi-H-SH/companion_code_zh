@@ -1,34 +1,52 @@
-from dialog_state_tracker import update_state
-from escalation_guard import should_escalate
+"""Generate an assistant reply while respecting the explicit safety rule."""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
 
 
-def build_reply(user_text: str, prior_state: dict | None = None):
-    state = update_state(prior_state or {}, user_text)
-    if should_escalate(user_text, state):
-        reply = (
-            "听起来这是需要立即处理的身体信号。"
-            " 我不能替代急诊判断，请现在尽快联系急救或让身边的人陪你去急诊。"
-        )
-        state["recommended_action"] = "urgent_handoff"
-        return reply, state
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-    if state.get("need") == "routine_support":
-        reply = (
-            "谢谢你把这个困难说出来。"
-            " 我建议先把吃药和每天固定动作绑定，例如早餐后或刷牙后立刻服药。"
-            " 你更容易忘记的是早上还是晚上？"
-        )
-    elif state.get("emotion") == "distressed":
-        reply = (
-            "听起来你最近很累，也因为睡眠问题感到烦躁。"
-            " 我建议先记录一周的睡眠时间和晚间刷手机情况，看看哪些时段最影响入睡。"
-            " 最近这种情况出现多久了？"
-        )
-    else:
-        reply = (
-            "我理解你想先弄清楚发生了什么。"
-            " 我可以帮你梳理下一步，但不能替代医生诊断。"
-            " 先告诉我最困扰你的一个症状。"
-        )
-    state["recommended_action"] = "self_monitor_and_follow_up"
-    return reply, state
+from shared.openai_utils import json_completion
+
+
+SCHEMA = {
+    "type": "object",
+    "properties": {
+        "assistant_reply": {"type": "string"},
+        "action_focus": {"type": "string"},
+        "boundary_statement": {"type": "string"},
+    },
+    "required": ["assistant_reply", "action_focus", "boundary_statement"],
+    "additionalProperties": False,
+}
+
+
+def generate_reply(policy: dict, scenario_focus: str, conversation_text: str, state: dict, escalation: dict) -> dict:
+    if escalation["needs_escalation"]:
+        return {
+            "assistant_reply": (
+                "Your symptoms sound urgent. Please seek immediate medical attention now or call emergency services, "
+                "rather than waiting to see if the symptoms pass."
+            ),
+            "action_focus": "urgent_handoff",
+            "boundary_statement": "This demo assistant cannot judge whether chest tightness and shortness of breath are safe to monitor at home.",
+        }
+    prompt = (
+        f"Teaching focus: {scenario_focus}\n"
+        f"Conversation so far:\n{conversation_text}\n\n"
+        f"State summary: {state}\n"
+        f"Policy voice: {policy.get('voice')}\n"
+        f"Must do: {policy.get('must_do')}\n"
+        f"Must not do: {policy.get('must_not')}\n"
+        "Write one short, empathetic English reply."
+    )
+    return json_completion(
+        "You are a careful health support agent for a classroom simulation. Do not diagnose. Keep the tone warm and concise.",
+        prompt,
+        "health_agent_reply",
+        SCHEMA,
+    )

@@ -1,41 +1,53 @@
+"""Generate short reminder messages based on the predicted barrier."""
+
+from __future__ import annotations
+
+import sys
 from pathlib import Path
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parents[1]
-INPUT_PATH = ROOT / "outputs" / "scored_habits.csv"
-OUTPUT_PATH = ROOT / "outputs" / "suggestions.csv"
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from shared.openai_utils import json_completion
 
 
-def build_suggestion(row) -> str:
-    tips = []
-    if row["low_morning_intake"]:
-        tips.append("可以设置 10:30 提醒，尽量在上午喝完第一瓶水")
-    if row["hot_weather"]:
-        tips.append("天气较热，建议下午额外准备约 400 毫升饮水")
-    if row["high_activity"]:
-        tips.append("运动前和运动后各补一次水，更容易达到目标")
-    if row["busy_flag"]:
-        tips.append("可以把喝水和日程切换绑定，减少忙碌时忘记喝水")
-    if row["low_sleep"]:
-        tips.append("睡眠不足时更容易忽略补水，建议把水杯直接放在桌面显眼位置")
-    if row["missed_previous_day"]:
-        tips.append("如果昨天没达标，今天可以先设一个午饭前的小补水目标")
-    if not tips:
-        tips.append("当前习惯比较稳定，可以继续保持，并在午后再检查一次进度")
-    return "；".join(tips)
+INPUT_PATH = ROOT / "chapter03_water_habit_helper" / "outputs" / "risk_predictions.csv"
+OUTPUT_PATH = ROOT / "chapter03_water_habit_helper" / "outputs" / "suggestions.csv"
+SCHEMA = {
+    "type": "object",
+    "properties": {
+        "reminder_message": {"type": "string"},
+        "micro_action": {"type": "string"},
+        "why_this_helps": {"type": "string"},
+    },
+    "required": ["reminder_message", "micro_action", "why_this_helps"],
+    "additionalProperties": False,
+}
+
+
+def suggestion_row(row: pd.Series) -> dict:
+    prompt = (
+        f"User {row['user_id']} on {row['date']} has risk score {row['risk_score']}. "
+        f"Main barrier: {row['main_barrier']}. Best reminder window: {row['best_reminder_window']}. "
+        "Write a short English reminder, one micro-action, and one explanation line."
+    )
+    result = json_completion(
+        "You are writing concise hydration reminders for a beginner-friendly teaching demo.",
+        prompt,
+        "hydration_suggestion",
+        SCHEMA,
+    )
+    return {"user_id": row["user_id"], "date": row["date"], **result}
 
 
 def main() -> None:
     frame = pd.read_csv(INPUT_PATH)
-    high_risk = frame[(frame["is_test"] == 1) & (frame["predicted_miss"] == 1)].copy()
-    high_risk["suggestion"] = high_risk.apply(build_suggestion, axis=1)
-    high_risk[["user_id", "date", "risk_score", "suggestion"]].to_csv(
-        OUTPUT_PATH,
-        index=False,
-        encoding="utf-8-sig",
-    )
-    print(f"已保存个性化提醒建议：{OUTPUT_PATH}")
+    rows = [suggestion_row(row) for _, row in frame.iterrows()]
+    pd.DataFrame(rows).to_csv(OUTPUT_PATH, index=False)
+    print(f"Saved {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

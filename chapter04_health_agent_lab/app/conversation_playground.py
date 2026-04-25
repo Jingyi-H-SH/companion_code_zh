@@ -1,51 +1,66 @@
-import csv
+"""Run the conversation scenarios and save a transcript file for review."""
+
+from __future__ import annotations
+
 import json
 import sys
 from pathlib import Path
+import pandas as pd
+import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC_PATH = ROOT / "src"
-if str(SRC_PATH) not in sys.path:
-    sys.path.insert(0, str(SRC_PATH))
+REPO_ROOT = ROOT.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
-from generate_agent_reply import build_reply
+from chapter04_health_agent_lab.src.dialog_state_tracker import summarize_user_state
+from chapter04_health_agent_lab.src.escalation_guard import check_escalation
+from chapter04_health_agent_lab.src.generate_agent_reply import generate_reply
 
 
-SCENARIO_PATH = ROOT / "data" / "dialog_scenarios.jsonl"
+DATA_PATH = ROOT / "data" / "dialog_scenarios.jsonl"
+POLICY_PATH = ROOT / "prompts" / "agent_policies.yaml"
 OUTPUT_PATH = ROOT / "outputs" / "conversation_transcripts.csv"
 
 
 def load_scenarios():
-    scenarios = []
-    for line in SCENARIO_PATH.read_text(encoding="utf-8").strip().splitlines():
-        scenarios.append(json.loads(line))
-    return scenarios
+    return [json.loads(line) for line in DATA_PATH.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def main():
+def main() -> None:
     scenarios = load_scenarios()
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    policy = yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8"))
     rows = []
     for scenario in scenarios:
-        state = {}
-        all_turns = [scenario["opening_user_message"]] + scenario["follow_up_turns"]
-        for turn_id, user_text in enumerate(all_turns, start=1):
-            reply, state = build_reply(user_text, state)
-            rows.append(
-                {
-                    "scenario_id": scenario["scenario_id"],
-                    "turn_id": turn_id,
-                    "user_text": user_text,
-                    "assistant_reply": reply,
-                    "recommended_action": state.get("recommended_action", "follow_up"),
-                }
-            )
-    with OUTPUT_PATH.open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()))
-        writer.writeheader()
-        writer.writerows(rows)
-    print(f"已保存对话记录：{OUTPUT_PATH}")
+        history = []
+        user_turns = [scenario["opening_user_message"], *scenario.get("follow_up_turns", [])]
+        for turn_index, user_message in enumerate(user_turns, start=1):
+            state = summarize_user_state(user_message)
+            escalation = check_escalation(user_message, policy)
+            history.append(f"User: {user_message}")
+            reply = generate_reply(policy, scenario["teaching_focus"], "\n".join(history), state, escalation)
+            history.append(f"Assistant: {reply['assistant_reply']}")
+            rows.append({
+                "scenario_id": scenario["scenario_id"],
+                "turn_index": turn_index,
+                "speaker": "user",
+                "message_text": user_message,
+                "teaching_focus": scenario["teaching_focus"],
+                "needs_escalation": escalation["needs_escalation"],
+                "action_focus": "",
+            })
+            rows.append({
+                "scenario_id": scenario["scenario_id"],
+                "turn_index": turn_index,
+                "speaker": "assistant",
+                "message_text": reply["assistant_reply"],
+                "teaching_focus": scenario["teaching_focus"],
+                "needs_escalation": escalation["needs_escalation"],
+                "action_focus": reply["action_focus"],
+            })
+    pd.DataFrame(rows).to_csv(OUTPUT_PATH, index=False)
+    print(f"Saved {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
