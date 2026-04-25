@@ -1,0 +1,38 @@
+[
+  {
+    "id": "GOV-PRIVACY-1",
+    "section": "privacy",
+    "title": "Data minimization and purpose limitation",
+    "content": "A health AI system should clearly justify what data it collects and avoid collecting sensitive information that is not necessary for the intended function."
+  },
+  {
+    "id": "GOV-PRIVACY-2",
+    "section": "privacy",
+    "title": "Retention and user control",
+    "content": "Good privacy practice includes a clearly stated retention period and a visible way for users to opt out or request data deletion where appropriate."
+  },
+  {
+    "id": "GOV-EXPLAIN-1",
+    "section": "explainability",
+    "title": "Capability boundaries",
+    "content": "Users should be able to understand what the system can do, what it cannot do, and when human support is needed."
+  },
+  {
+    "id": "GOV-EXPLAIN-2",
+    "section": "explainability",
+    "title": "Reasoning basis and traceability",
+    "content": "Systems should communicate the basis of recommendations at an understandable level, especially when advice may influence health-related decisions."
+  },
+  {
+    "id": "GOV-FAIR-1",
+    "section": "fairness",
+    "title": "Group testing",
+    "content": "Fairness review should include testing across user groups, especially where access, demographic background, or language differences may influence outputs."
+  },
+  {
+    "id": "GOV-FAIR-2",
+    "section": "fairness",
+    "title": "Monitoring and appeal pathways",
+    "content": "After deployment, teams should monitor disparate impact and give users a path to correction, appeal, or human review."
+  }
+]

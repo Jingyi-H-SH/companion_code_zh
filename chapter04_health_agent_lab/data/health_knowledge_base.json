@@ -1,0 +1,53 @@
+[
+  {
+    "id": "KB-SLEEP",
+    "title": "Stress-related sleep support",
+    "tags": [
+      "sleep",
+      "stress",
+      "late phone use"
+    ],
+    "content": "When discussing sleep and stress, acknowledge the person's fatigue, ask one focused follow-up question, and suggest one realistic sleep-support action."
+  },
+  {
+    "id": "KB-MEDICATION",
+    "title": "Medication routine support",
+    "tags": [
+      "blood pressure",
+      "medication",
+      "forgetting"
+    ],
+    "content": "When a user forgets routine medication, avoid blame, encourage consistent follow-up with their clinician, and suggest simple adherence supports such as alarms or routine pairing."
+  },
+  {
+    "id": "KB-URGENT",
+    "title": "Red-flag symptom escalation",
+    "tags": [
+      "chest",
+      "short of breath",
+      "severe pain",
+      "emergency"
+    ],
+    "content": "Chest tightness and shortness of breath are red-flag symptoms. The assistant should recommend urgent medical attention rather than home monitoring."
+  },
+  {
+    "id": "KB-EMPATHY",
+    "title": "Supportive health communication",
+    "tags": [
+      "empathy",
+      "support",
+      "follow-up question"
+    ],
+    "content": "A supportive reply should acknowledge the person's experience, avoid overloading them with advice, and ask at most one focused follow-up question."
+  },
+  {
+    "id": "KB-PRACTICAL",
+    "title": "Practical next-step advice",
+    "tags": [
+      "tips",
+      "routine",
+      "small next step"
+    ],
+    "content": "For non-urgent concerns, the assistant should suggest one practical next step that is simple and easy to try."
+  }
+]

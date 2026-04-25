@@ -1,0 +1,30 @@
+[
+  {
+    "id": "STRATEGY-EARLY",
+    "barrier": "low morning intake",
+    "title": "Build progress early in the day",
+    "content": "When morning intake is low, a reminder should focus on starting early rather than trying to catch up all at once later.",
+    "reminder_example": "Try finishing one glass of water before lunch so the rest of the day feels easier."
+  },
+  {
+    "id": "STRATEGY-BUSY",
+    "barrier": "busy schedule",
+    "title": "Use timed micro-breaks",
+    "content": "On busy days, short timed reminders and easy-to-reach water placement are more realistic than vague advice.",
+    "reminder_example": "Set a short phone alarm for your next break and keep a bottle where you can see it."
+  },
+  {
+    "id": "STRATEGY-EXERCISE",
+    "barrier": "exercise and heat",
+    "title": "Pair hydration with activity",
+    "content": "When temperature or exercise load is high, reminders should connect hydration to activity recovery and comfort.",
+    "reminder_example": "Have water ready right after exercise so rehydration happens automatically."
+  },
+  {
+    "id": "STRATEGY-HABIT",
+    "barrier": "repeat misses",
+    "title": "Link water to an existing routine",
+    "content": "When the person missed the goal yesterday, reminders should connect hydration to an existing habit instead of relying on motivation alone.",
+    "reminder_example": "Pair your next water break with an action you already do every afternoon."
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "TOPIC-ACCESS",
+    "topic": "appointment_access",
+    "title": "Appointment access and booking",
+    "content": "Use this reference when a resident asks about booking, waiting time, online scheduling, or trouble reaching a clinic.",
+    "moderator_hint": "A helpful reply should point to booking channels or contact steps rather than offering medical advice."
+  },
+  {
+    "id": "TOPIC-CHRONIC",
+    "topic": "chronic_disease",
+    "title": "Chronic disease management",
+    "content": "Use this reference when the message involves blood pressure, medication routines, dizziness, or disease-monitoring questions.",
+    "moderator_hint": "A helpful reply should encourage appropriate follow-up with a clinician rather than adjusting medication directly."
+  },
+  {
+    "id": "TOPIC-LIFESTYLE",
+    "topic": "diet_exercise",
+    "title": "Lifestyle and behavior change",
+    "content": "Use this reference when the message is about exercise, healthy eating, weight management, or daily routines.",
+    "moderator_hint": "A helpful reply can suggest simple next steps and realistic behavior changes."
+  },
+  {
+    "id": "TOPIC-PAYMENT",
+    "topic": "insurance_payment",
+    "title": "Insurance and payment questions",
+    "content": "Use this reference when the resident asks about reimbursement, coverage, bills, payment options, or insurance paperwork.",
+    "moderator_hint": "A helpful reply should direct the resident to financial or administrative support resources."
+  }
+]

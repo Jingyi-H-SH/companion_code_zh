@@ -1,5 +1,3 @@
-"""Generate short reminder messages based on the predicted barrier."""
-
 from __future__ import annotations
 
 import sys
@@ -12,35 +10,50 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from shared.openai_utils import json_completion
+from shared.rag_utils import format_chunks, load_json_items, retrieve_chunks
 
 
 INPUT_PATH = ROOT / "chapter03_water_habit_helper" / "outputs" / "risk_predictions.csv"
 OUTPUT_PATH = ROOT / "chapter03_water_habit_helper" / "outputs" / "suggestions.csv"
+PLAYBOOK_PATH = ROOT / "chapter03_water_habit_helper" / "data" / "reminder_playbook.json"
+PLAYBOOK = load_json_items(PLAYBOOK_PATH)
 SCHEMA = {
     "type": "object",
     "properties": {
         "reminder_message": {"type": "string"},
         "micro_action": {"type": "string"},
-        "why_this_helps": {"type": "string"},
+        "why_this_helps": {"type": "string"}
     },
     "required": ["reminder_message", "micro_action", "why_this_helps"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
 
 
 def suggestion_row(row: pd.Series) -> dict:
+    retrieved = retrieve_chunks(
+        f"{row['main_barrier']} {row['best_reminder_window']} risk {row['risk_score']}",
+        PLAYBOOK,
+        top_k=2,
+    )
     prompt = (
-        f"User {row['user_id']} on {row['date']} has risk score {row['risk_score']}. "
-        f"Main barrier: {row['main_barrier']}. Best reminder window: {row['best_reminder_window']}. "
+        f"User {row['user_id']} on {row['date']} has risk score {row['risk_score']}.\n"
+        f"Main barrier: {row['main_barrier']}.\n"
+        f"Best reminder window: {row['best_reminder_window']}.\n"
+        f"Retrieved strategies:\n{format_chunks(retrieved)}\n\n"
         "Write a short English reminder, one micro-action, and one explanation line."
     )
     result = json_completion(
-        "You are writing concise hydration reminders for a beginner-friendly teaching demo.",
+        "You are writing concise hydration reminders for a beginner-friendly teaching demo. Use the retrieved strategies as grounding context.",
         prompt,
         "hydration_suggestion",
         SCHEMA,
     )
-    return {"user_id": row["user_id"], "date": row["date"], **result}
+    return {
+        "user_id": row["user_id"],
+        "date": row["date"],
+        **result,
+        "retrieved_strategy_ids": "|".join(item["id"] for item in retrieved),
+    }
 
 
 def main() -> None:

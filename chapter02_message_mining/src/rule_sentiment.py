@@ -1,5 +1,3 @@
-"""Ask the model for a short reader-facing reply and a moderator note."""
-
 from __future__ import annotations
 
 import sys
@@ -22,10 +20,10 @@ SCHEMA = {
     "properties": {
         "reader_reply": {"type": "string"},
         "moderator_note": {"type": "string"},
-        "follow_up_question": {"type": "string"},
+        "follow_up_question": {"type": "string"}
     },
     "required": ["reader_reply", "moderator_note", "follow_up_question"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
 
 
@@ -36,6 +34,7 @@ def build_guidance(row: pd.Series) -> dict:
         f"Predicted sentiment: {row['predicted_sentiment']}\n"
         f"Urgency: {row['urgency_level']}\n"
         f"Detected need: {row['public_need']}\n"
+        f"Retrieved reference titles: {row['retrieved_reference_titles']}\n"
         "Draft a short, calm English response for the reader and a one-sentence note for an instructor."
     )
     result = json_completion(

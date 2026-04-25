@@ -1,5 +1,3 @@
-"""Run the conversation scenarios and save a transcript file for review."""
-
 from __future__ import annotations
 
 import json
@@ -49,6 +47,8 @@ def main() -> None:
                 "teaching_focus": scenario["teaching_focus"],
                 "needs_escalation": escalation["needs_escalation"],
                 "action_focus": "",
+                "retrieved_reference_ids": "",
+                "boundary_statement": "",
             })
             rows.append({
                 "scenario_id": scenario["scenario_id"],
@@ -58,6 +58,8 @@ def main() -> None:
                 "teaching_focus": scenario["teaching_focus"],
                 "needs_escalation": escalation["needs_escalation"],
                 "action_focus": reply["action_focus"],
+                "retrieved_reference_ids": "|".join(reply.get("retrieved_reference_ids", [])),
+                "boundary_statement": reply.get("boundary_statement", ""),
             })
     pd.DataFrame(rows).to_csv(OUTPUT_PATH, index=False)
     print(f"Saved {OUTPUT_PATH}")

@@ -1,5 +1,3 @@
-"""Run the three section checks and build a final reader-facing report."""
-
 from __future__ import annotations
 
 import json
@@ -72,6 +70,7 @@ def main() -> None:
         lines.append(f"## {section_name.title()}")
         lines.append(section["summary"])
         lines.append(f"Score: {section['score']:.1f}/{section['max_score']:.1f}")
+        lines.append(f"Retrieved references: {', '.join(section.get('retrieved_reference_ids', []))}")
         for finding in section["findings"]:
             lines.append(f"- {finding['status'].upper()}: {finding['question']} | score {finding['score']}/{finding['weight']} | {finding['recommended_action']}")
         lines.append("")
